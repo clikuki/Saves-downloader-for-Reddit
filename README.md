@@ -1,7 +1,9 @@
 # Saves Downloader
 A node.js command line program for downloading your saved posts in reddit
 
-Currently, it only supports images. Videos require the JSON of the post itself(I think), gallery URLs don't allow you to download it, and comments can sometime contain URLs that don't point to images, causing the program to stop. I've also only tested this on windows 10, so I'm not sure if it will work on other platforms.
+Currently, it only supports images. Videos require the JSON of the post (I think) because the video and audio are separate, gallery URLs don't allow you to download it, and comments can sometime contain URLs that don't point to images, causing the program to stop. I've also only tested this on windows 10, so I'm not sure if it will work on other platforms.
+
+Note: This may not be how you're supposed use node, but I just needed a way to download posts from my saves, and it works so I think it's fine for now.
 
 ## Installing
 First, you will need to have node and npm installed. Go to [Node.js download page](https://nodejs.org/en/download/) and download node. The package includes npm too, so all you have to do is run the node installer. Verify that you have downloaded node correctly by opening command prompt and entering `node -v` into the console.
