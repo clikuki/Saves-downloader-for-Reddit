@@ -1,0 +1,4 @@
+node_modules/
+Downloads/*.png
+Downloads/*.jpg
+*.txt

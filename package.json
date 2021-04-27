@@ -1,0 +1,17 @@
+{
+  "name": "saves-downloader-for-reddit",
+  "version": "1.0.0",
+  "description": "downloads posts from your saves",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "clikuki",
+  "license": "MIT",
+  "dependencies": {
+    "download-url": "^2.0.3",
+    "prompt": "^1.1.0",
+    "snoowrap": "^1.22.0",
+    "url-download": "0.0.8"
+  }
+}
