@@ -242,7 +242,7 @@ function setFetchLimitPrompt() {
 	prompt.start();
 	console.log(`${BIG_BAR}\nPlease enter a number from 1 to 100 to set the saves fetch limit.\n`);
 	prompt.get(['Limit'], (err, resolve) => {
-		if(err !== null) return console.error(err);
+		if(err) throw err;
 
 		// Fetch limit defaults to 10, and can only be from 1 - 100
 		let fetchLimit = +resolve['Limit'];
@@ -279,7 +279,7 @@ function removeSavesPrompt(urlArray, manualUrlArray) {
 	prompt.start();
 	console.log(`Unsave downloaded and undownloadable saves?`);
 	prompt.get(schema, (err, resolve) => {
-		if(err !== null) return console.error(err);
+		if(err) throw err;
 
 		if(['yes', 'y'].includes(resolve['Downloadable'])) {
 			console.log(`\nRemoving saves...\n${BIG_BAR}`);
@@ -308,7 +308,7 @@ function removeUndownloadableSavesPrompt(manualUrlArray) {
 	prompt.start();
 	console.log(`Unsave downloaded and undownloadable saves?`);
 	prompt.get(['Undownloadable'], (err, resolve) => {
-		if(err !== null) return console.error(err);
+		if(err) throw err;
 
 		if(['yes', 'y'].includes(resolve['Undownloadable'])) {
 			removeUndownloadableSaves(manualUrlArray)
@@ -327,7 +327,7 @@ function startDownloadsPrompt(urlArray, manualUrlArray) {
 	prompt.start();
 	console.log(`Start downloads?`);
 	prompt.get(['Choice'], (err, resolve) => {
-		if(err !== null) return console.error(err);
+		if(err) throw err;
 		if(['yes', 'y'].includes(resolve['Choice'])) {
 			setFilePath(urlArray, manualUrlArray);
 		}else if(['no', 'n'].includes(resolve['Choice'])) {
@@ -345,7 +345,7 @@ function setFilePath(urlArray, manualUrlArray) {
 	prompt.start();
 	console.log('Please enter the absolute path to your desired directory, or press enter for default');
 	prompt.get(['File destination'], (err, resolve) => {
-		if(err !== null) return console.error(err);
+		if(err) throw err;
 		// defaults to .\Downloads
 		let dest = resolve['File destination'] || '.\\Downloads';
 
@@ -370,7 +370,7 @@ function chooseOperationPrompt(filteredListing, firstTime = true) {
 		);
 	}
 	prompt.get(['Choice'], (err, resolve) => {
-		if(err !== null) return console.error(err);
+		if(err) throw err;
 		switch (resolve['Choice'].toLowerCase()) {
 			case 'd':
 				log(filteredListing.manualUrlArray, filteredListing.counter);
