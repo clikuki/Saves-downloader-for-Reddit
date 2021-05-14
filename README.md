@@ -22,32 +22,37 @@ First, go to <https://www.reddit.com/prefs/apps> and click create app. It will t
 After filling it out, it will show up under **developed applications**. To get the client ID, copy the string beside the icon (or under the words "personal use script"). To get the client secret, click on edit then copy the string beside **secret**.
 
 ## Entering your user credentials to the program
-Go to the program folder and and open `main.js` with a text editor such as notepad or VSCode. Then, find the area to put your credentials. It will look like this:
+Go to the program folder, go to the folder named js, and open `userInfo.js` with a text editor such as notepad or VSCode. Then, find the area to put your credentials. It will look like this:
 ```javascript
-const r = new snoowrap({
-	userAgent : 'windows:savesImageDownloader:v1.0.0 (by u/clikuki)',
-	clientId : 'client ID here',
-	clientSecret : 'client secret here',
-	username : 'username here',
-	password : 'password here'
+exports.r = new snoowrap({
+	userAgent : 'windows:savesImageDownloader:v2.0.0 (by u/clikuki)',
+	clientId : 'Client ID here',
+	clientSecret : 'Client secret here',
+	username : 'Reddit username here',
+	password : 'Password here'
 });
 ```
-Replace the strings between the single quotes with their respective information, Then save.
+Replace the strings between the single quotes with their respective information, then hit save.
 
-## Adding allowed subreddits
+## Adding allowed subreddits and profiles
 To add subreddits or profiles the program should check for in your saves, go to the program folder and open `check.js` with a text editor such as notepad or VSCode. You should see this:
 ```javascript
 exports.subredditsAndProfiles = [];
 ```
-Put your subreddits in lowercase between the square brackets inside single or double quotations. Then separate the subreddits with commas. It should look something like this:
+Put your subreddits in lowercase between the square brackets inside single or double quotations. Then separate the subreddits with commas. For example, to add [r/pic](https://www.reddit.com/r/pic) and [r/images](https://www.reddit.com/r/images):
 ```javascript
 exports.subredditsAndProfiles = ['pic', 'images'];
 ```
-To add profiles, do the same but with u_ preceding it. It should look something like this:
+To add profiles, do the same but with u_ preceding it. For example, to add users Clikuki and RandomUser1234:
 ```javascript
 exports.subredditsAndProfiles = ['pic', 'images','u_clikuki','u_randomuser1234'];
 ```
 After you have finished, save the file.
 
 ## Running the program
-To run it, open command prompt, navigate to the folder with `cd "File path to program files"`. Use [this](https://www.howtogeek.com/659411/how-to-change-directories-in-command-prompt-on-windows-10/) for windows, [this](https://www.macworld.com/article/221277/master-the-command-line-navigating-files-and-folders.html) if you are on Mac. Then enter `node main`. You should see a prompt appear on the terminal. Follow the steps, and it should work.
+To run it, open command prompt and navigate to the folder with `cd "path to program files"`. Use [this](https://www.howtogeek.com/659411/how-to-change-directories-in-command-prompt-on-windows-10/) for windows, [this](https://www.macworld.com/article/221277/master-the-command-line-navigating-files-and-folders.html) if you are on Mac. Then enter `node js/main`. You should see a prompt appear on the terminal. Follow the steps, and it should work.
+
+## What happens to your saves
+After downloading your saves, you will be asked if you want to unsave posts that you have downloaded, and those that counldn't be downloaded. If you choose yes to both, then the posts will unsaved. Additionally, the posts that couldn't be downloaded will have their URLs written to `manualPosts.txt`, which can be found in the folder named `urls`.
+
+If you chose to unsave invalid posts/posts whose subreddit wasn't included in `check.js`, then their URLs will be written to `invalidPosts.txt` ound in the `urls` folder.

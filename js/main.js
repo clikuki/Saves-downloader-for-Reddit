@@ -1,21 +1,13 @@
-const snoowrap = require('snoowrap');
-const prompt = require('prompt');
-const fs = require('fs');
-const download = require('url-download');
-const check = require('./check.js');
+const prompt = require('prompt'),
+	  fs = require('fs'),
+	  download = require('url-download');
+
+const check = require('./check.js').subredditsAndProfiles;
+	  r = require('./userInfo.js').r;
 
 // Used for creating separators for console
 const BIG_BAR = '========================================================================================================';
 const SMALL_BAR = '---------------------------------------------';
-
-// Where you put your username, password, client ID and secret (go to https://www.reddit.com/prefs for the client ID an secret)
-const r = new snoowrap({
-	userAgent : 'windows:savesImageDownloader:v1.0.0 (by u/clikuki)',
-	clientId : 'client ID here',
-	clientSecret : 'client secret here',
-	username : 'username here',
-	password : 'password here'
-});
 
 // Fetches the saves listings
 function getSaves(fetchLimit) {
@@ -57,7 +49,7 @@ function filterSaveslisting(savesListing) {
 			type = postType(savesListing[i]),
 			url = getUrl(type, savesListing[i]);
 
-		if(invalidPost(subredditName)) {
+		if(isInvalid(subredditName)) {
 			invalidPosts.push({
 				permalink : `https://reddit.com${savesListing[i].permalink}`,
 				subredditName : subredditName,
@@ -124,20 +116,35 @@ function postType(post) {
 // Gets the URL of image in post or the URL included in the comment
 function getUrl(type, post) {
 	if(type === 'comment') {
-		let body = JSON.stringify(post.body);
-
-		return body.substring(
-			body.lastIndexOf('(') + 1,
-			body.lastIndexOf(')')
-		).replace(/['"]+/g, '')
+		let urlArray = separateUrlFromString(JSON.stringify(post.body));
+		
+		if(urlArray === null) {
+			return JSON.stringify(post.link_permalink).replace(/['"]+/g, '') + post.id;
+		}else {
+			return [...urlArray, post.link_permalink].toString().replace(/,/g, ', ');
+		}
 	}else {
 		return JSON.stringify(post.url).replace(/['"]+/g, '');
 	}
 }
 
+// Gets substrings between parenthesises
+function separateUrlFromString(string) {
+	const regex = /\(([^\)(]+)\)/g,
+		  linkArray = string.match(regex);
+
+	if(linkArray === null) return null;
+
+	linkArray.forEach((link, index) => {
+		linkArray[index] = link.replace(/[()]/g, '');
+	})
+
+	return linkArray;
+}
+
 // Checks if subreddit of post is included in check.js
-function invalidPost(subredditName, type) {
-	if(!check.subredditsAndProfiles.includes(subredditName.toLowerCase())) {
+function isInvalid(subredditName, type) {
+	if(!check.includes(subredditName.toLowerCase())) {
 		if(type === 'comment') {
 			if(url === body || url === '' || !url.includes('https://')) {
 				return true;
@@ -181,8 +188,10 @@ function log(manualUrlArray, counter) {
 }
 
 // Downloads images taken from saves
-async function downloadUrls(urlArray, manualUrlArray, dest) {
-	console.log(`\nDownloads starting - downloading to ${dest}\n${BIG_BAR}`);
+async function downloadUrls(urlArray, manualUrlArray) {
+	const dest = './downloads';
+
+	console.log(`\nDownloads starting - downloading to ${dest}\n${BIG_BAR}\n`);
 
 	for (let i = 0; i < urlArray.length; i++) {
 		download(urlArray[i].url, dest);
@@ -200,7 +209,7 @@ function removeDownloadedSaves(urlArray) {
 
 // Removes saves that can't be downloaded and writes the subreddit and URL to the post or comment
 function removeUndownloadableSaves(manualUrlArray) {
-	const writeTo = fs.createWriteStream('.\\manualURL.txt', {
+	const writeTo = fs.createWriteStream('./urls/manualPosts.txt', {
 		flags: 'a'
 	})
 	
@@ -217,7 +226,7 @@ function removeUndownloadableSaves(manualUrlArray) {
 
 // Removes saves that are invalid (not in check.js) and writes the subreddit and URL to post or comment
 function removeInvalidSaves(invalidPosts) {
-	const writeTo = fs.createWriteStream('.\\invalidPosts.txt', {
+	const writeTo = fs.createWriteStream('./urls/invalidPosts.txt', {
 		flags: 'a'
 	})
 
@@ -304,9 +313,8 @@ function removeSavesPrompt(urlArray, manualUrlArray) {
 
 // Prompt user if it should remove undownloadable saves and write them in invalidPosts.txt (use this if URL array is empty)
 function removeUndownloadableSavesPrompt(manualUrlArray) {
-	// Allows for multiple prompts
 	prompt.start();
-	console.log(`Unsave downloaded and undownloadable saves?`);
+	console.log(`Unsave undownloadable saves?`);
 	prompt.get(['Undownloadable'], (err, resolve) => {
 		if(err) throw err;
 
@@ -329,7 +337,7 @@ function startDownloadsPrompt(urlArray, manualUrlArray) {
 	prompt.get(['Choice'], (err, resolve) => {
 		if(err) throw err;
 		if(['yes', 'y'].includes(resolve['Choice'])) {
-			setFilePath(urlArray, manualUrlArray);
+			downloadUrls(urlArray, manualUrlArray);
 		}else if(['no', 'n'].includes(resolve['Choice'])) {
 			console.log(`\nExiting script.\n${BIG_BAR}`);
 		}else {
@@ -337,27 +345,6 @@ function startDownloadsPrompt(urlArray, manualUrlArray) {
 			// repeats prompt for valid input
 			startDownloadsPrompt(urlArray, manualUrlArray);
 		}
-	})
-}
-
-// Asks user for directory to put downloads in
-function setFilePath(urlArray, manualUrlArray) {
-	prompt.start();
-	console.log('Please enter the absolute path to your desired directory, or press enter for default');
-	prompt.get(['File destination'], (err, resolve) => {
-		if(err) throw err;
-		// defaults to .\Downloads
-		let dest = resolve['File destination'] || '.\\Downloads';
-
-		if(resolve['File destination'] !== '') {
-			// checks if string passed in is valid path
-			if(!fs.existsSync(resolve['File destination'])) {
-				dest = '.\\Downloads';
-				console.log('File destination invalid, default to .\\Downloads')
-			}
-		}
-
-		downloadUrls(urlArray, manualUrlArray, dest);
 	})
 }
 
