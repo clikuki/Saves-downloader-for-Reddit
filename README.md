@@ -1,6 +1,6 @@
 # Saves Downloader
 
-Note: I made a new one that doesn't keep spitting out errors and is (maybe?) better, [Link to repo!](https://github.com/clikuki/savesDownloaderPlus)
+Note: I've archived this one, because I've made a new one that doesn't keep spitting out errors and is (maybe?) better, [Link to repo!](https://github.com/clikuki/savesDownloaderPlus)
 
 A node.js command line program for downloading your saved posts in reddit
 
