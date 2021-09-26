@@ -1,4 +1,7 @@
 # Saves Downloader
+
+Note: I made a new one that doesn't keep spitting out errors and is (maybe?) better, [Link to repo!](https://github.com/clikuki/savesDownloaderPlus)
+
 A node.js command line program for downloading your saved posts in reddit
 
 Currently, it only supports images. Videos require the JSON of the post (I think) because the video and audio are separate, gallery URLs don't allow you to download it, and comments can sometime contain URLs that don't point to images, causing the program to stop. I've also only tested this on windows 10, so I'm not sure if it will work on other platforms.
